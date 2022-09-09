@@ -2,6 +2,7 @@
 from logging import raiseExceptions
 from Xlib.ext import randr
 import subprocess
+from sys import argv
 class WdVncServer():
     display_port_name = "HDMI-A-0"
     resolution_tup = (1620,1080)
@@ -70,6 +71,11 @@ class WdVncServer():
         subprocess.run(vnc_cmd_line)
 
 if __name__=='__main__':
+
     WdVncServer.createDisplayModeXrandr()
-    WdVncServer.addModeToXrandrDisplayPort()
-    WdVncServer.startVncServer()
+    if argv[1]=="extend":
+        WdVncServer.addModeToXrandrDisplayPort()
+    elif argv[1]=="reset":
+        WdVncServer.delModeFromXrandrPort()
+    else:
+        WdVncServer.startVncServer()
