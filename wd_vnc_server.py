@@ -2,7 +2,7 @@
 from logging import raiseExceptions
 from Xlib.ext import randr
 import subprocess
-class WdVnc():
+class WdVncServer():
     display_port_name = "HDMI-A-0"
     resolution_tup = (1620,1080)
     display_mode_name = None
@@ -10,6 +10,7 @@ class WdVnc():
     clip_suffix="-1920+0"
     main_display_port_name = "eDP"
     main_display_port = ":0"
+    tcp_rfb_port = 5923
     @classmethod
     def fetchModeFromResolution(cls):
         cvt_out = subprocess.run(['cvt', str(cls.resolution_tup[0]), str(cls.resolution_tup[1])], stdout=subprocess.PIPE).stdout.decode()
@@ -65,10 +66,10 @@ class WdVnc():
     @classmethod
     def startVncServer(cls):
         clip_str = f"{cls.resolution_tup[0]}x{cls.resolution_tup[1]}{cls.clip_suffix}"
-        vnc_cmd_line = ["x11vnc","-localhost","-display",cls.main_display_port,"-clip", clip_str]
+        vnc_cmd_line = ["x11vnc","-localhost","-display",cls.main_display_port,"-clip", clip_str,"-rfbport",str(cls.tcp_rfb_port)]
         subprocess.run(vnc_cmd_line)
 
 if __name__=='__main__':
-    WdVnc.createDisplayModeXrandr()
-    WdVnc.addModeToXrandrDisplayPort()
-    WdVnc.startVncServer()
+    WdVncServer.createDisplayModeXrandr()
+    WdVncServer.addModeToXrandrDisplayPort()
+    WdVncServer.startVncServer()
