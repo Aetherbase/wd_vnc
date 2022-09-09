@@ -3,6 +3,7 @@ from logging import raiseExceptions
 from Xlib.ext import randr
 import subprocess
 from sys import argv
+from netifaces import interfaces, ifaddresses, AF_INET
 class WdVncServer():
     display_port_name = "HDMI-A-0"
     resolution_tup = (1620,1080)
@@ -12,6 +13,7 @@ class WdVncServer():
     main_display_port_name = "eDP"
     main_display_port = ":0"
     tcp_rfb_port = 5923
+    local_net_interface = 'wlp3s0'
     @classmethod
     def fetchModeFromResolution(cls):
         cvt_out = subprocess.run(['cvt', str(cls.resolution_tup[0]), str(cls.resolution_tup[1])], stdout=subprocess.PIPE).stdout.decode()
@@ -67,15 +69,22 @@ class WdVncServer():
     @classmethod
     def startVncServer(cls):
         clip_str = f"{cls.resolution_tup[0]}x{cls.resolution_tup[1]}{cls.clip_suffix}"
-        vnc_cmd_line = ["x11vnc","-localhost","-display",cls.main_display_port,"-clip", clip_str,"-rfbport",str(cls.tcp_rfb_port)]
+        vnc_cmd_line = ["x11vnc","-localhost","-display",cls.main_display_port,"-clip", clip_str,"-rfbport",str(cls.tcp_rfb_port),"-xwarppointer","-multiptr"]
         subprocess.run(vnc_cmd_line)
+
+    @classmethod
+    def getInterfaceIp(cls):
+        addr = ifaddresses(cls.local_net_interface).setdefault(AF_INET, [{'addr':'No IP addr'}] )[0]['addr']
+        print("local ip addr :",  addr)
 
 if __name__=='__main__':
 
-    WdVncServer.createDisplayModeXrandr()
     if argv[1]=="extend":
+        WdVncServer.createDisplayModeXrandr()
         WdVncServer.addModeToXrandrDisplayPort()
+        WdVncServer.getInterfaceIp()
     elif argv[1]=="reset":
+        WdVncServer.createDisplayModeXrandr()
         WdVncServer.delModeFromXrandrPort()
-    else:
+    elif argv[1]=="start":
         WdVncServer.startVncServer()
