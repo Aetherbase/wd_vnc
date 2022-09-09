@@ -69,7 +69,7 @@ class WdVncServer():
     @classmethod
     def startVncServer(cls):
         clip_str = f"{cls.resolution_tup[0]}x{cls.resolution_tup[1]}{cls.clip_suffix}"
-        vnc_cmd_line = ["x11vnc","-localhost","-display",cls.main_display_port,"-clip", clip_str,"-rfbport",str(cls.tcp_rfb_port),"-xwarppointer","-multiptr"]
+        vnc_cmd_line = ["x11vnc","-localhost","-display",cls.main_display_port,"-clip", clip_str,"-rfbport",str(cls.tcp_rfb_port),"-xwarppointer","-multiptr",'-noxdamage' ,'-ncache','15']
         subprocess.run(vnc_cmd_line)
 
     @classmethod
