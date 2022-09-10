@@ -17,7 +17,6 @@ class WdVncClient():
     # client_path = '"C:\\Program Files\\RealVNC\\VNC Viewer\\vncviewer.exe"'
     @classmethod
     def init(cls,ip_suffix):
-        print("initializing ssh client")
         cls.ssh_host_ip="192.168."+ip_suffix
         digits=str(cls.ssh_host_ip).split(".")
         if len(digits)!=4:
@@ -60,6 +59,7 @@ class WdVncClient():
 
 if __name__=="__main__":
     ip_suffix = easygui.enterbox("Enter IP suffix digits","WdVncClient",strip=True,default="0.0")
+    print("initializing ssh client")
     WdVncClient.init(ip_suffix)
     WdVncProcList = [WdVncClient.forwardVncPort,
         WdVncClient.startRemoteVncServer,WdVncClient.startVncClient]
